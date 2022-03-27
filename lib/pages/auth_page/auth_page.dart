@@ -26,16 +26,9 @@ class AuthPage extends StatelessWidget {
             fit: BoxFit.cover,
           ),
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  AppColors.dBackground,
-                  AppColors.dBackground,
-                  AppColors.dBackground,
-                  AppColors.dBackground,
-                  AppColors.dBackground.withOpacity(0.8),
-                  AppColors.dBackground.withOpacity(0.1),
-                ],
+                colors: AppColors.listDBackground,
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
               ),
