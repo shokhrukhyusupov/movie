@@ -1,11 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class UserRepository {
+  final CollectionReference _collectionReference =
+      FirebaseFirestore.instance.collection('users');
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FacebookAuth _facebookAuth = FacebookAuth.instance;
+  final _storage = const FlutterSecureStorage();
 
   /*-------------------Authentication with Email-------------------*/
   Future<User> emailSignIn(
@@ -24,6 +29,13 @@ class UserRepository {
     try {
       final emailAuth = await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
+      final user = _firebaseAuth.currentUser;
+      await _collectionReference.doc(user!.uid).set({
+        'uid': user.uid,
+        'email': user.email,
+        'displayName': user.displayName,
+        'photoUrl': user.photoURL,
+      });
       return emailAuth.user!;
     } on FirebaseException catch (e) {
       throw e.message.toString();
@@ -32,6 +44,7 @@ class UserRepository {
 
   Future<void> signOutfromEmail() async {
     await _firebaseAuth.signOut();
+    _storage.delete(key: 'token');
   }
 
   /*-------------------Authentication with Google-------------------*/
@@ -40,13 +53,19 @@ class UserRepository {
       final googleUser = await _googleSignIn.signIn();
       if (googleUser != null) {
         final googleAuth = await googleUser.authentication;
-
         final credential = GoogleAuthProvider.credential(
           idToken: googleAuth.idToken,
           accessToken: googleAuth.accessToken,
         );
-
         await FirebaseAuth.instance.signInWithCredential(credential);
+        final uid = _firebaseAuth.currentUser!.uid;
+        await _collectionReference.doc(uid).set({
+          'uid': uid,
+          'email': googleUser.email,
+          'displayName': googleUser.displayName,
+          'photoUrl': googleUser.photoUrl,
+        });
+        _storage.write(key: 'token', value: uid);
       }
       return googleUser as User;
     } on FirebaseException catch (e) {
@@ -57,6 +76,7 @@ class UserRepository {
   Future<void> signOutfromGoogle() async {
     await _googleSignIn.disconnect();
     await _googleSignIn.signOut();
+    _storage.delete(key: 'token');
   }
 
   /*-------------------Authentication with Facebook-------------------*/
@@ -67,6 +87,17 @@ class UserRepository {
           FacebookAuthProvider.credential(result.accessToken!.token);
       await FirebaseAuth.instance.signInWithCredential(credential);
       final user = result.accessToken as User;
+      if (result.accessToken != null) {
+        await FirebaseAuth.instance.signInWithCredential(credential);
+        final uid = _firebaseAuth.currentUser!.uid;
+        await _collectionReference.doc(uid).set({
+          'uid': uid,
+          'email': user.email,
+          'displayName': user.displayName,
+          'photoUrl': user.photoURL,
+        });
+        _storage.write(key: 'token', value: uid);
+      }
       return user;
     } on FirebaseException catch (e) {
       throw e.message.toString();
@@ -75,5 +106,6 @@ class UserRepository {
 
   Future<void> signOutFromFacebook() async {
     await _facebookAuth.logOut();
+    _storage.delete(key: 'token');
   }
 }
