@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movie/pages/auth_page/components/add_login_submit_buttons.dart';
 import 'package:movie/pages/auth_page/components/password_form_field.dart';
 import 'package:movie/pages/auth_page/components/submit_button.dart';
 import 'package:movie/styles/colors.dart';
@@ -103,29 +104,7 @@ class AuthPage extends StatelessWidget {
                         textScaleFactor:
                             MediaQuery.of(context).textScaleFactor.clamp(1, 1),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 25),
-                        child: Row(
-                          children: [
-                            OutlinedButton(
-                              onPressed: () {},
-                              child: Image.asset(
-                                Images.google,
-                                width: MediaQuery.of(context).size.width * 0.1,
-                              ),
-                            ),
-                            const SizedBox(width: 20),
-                            OutlinedButton(
-                              onPressed: () {},
-                              child: Image.asset(
-                                Images.facebook,
-                                width: MediaQuery.of(context).size.width * 0.1,
-                                color: const Color(0xFF3b5998),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      const AddLoginSubmitButton(),
                       SubmitButton(formKey: _formKey),
                       SizedBox(height: 2.h)
                     ],
