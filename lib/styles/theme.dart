@@ -37,8 +37,8 @@ abstract class AppTheme {
         fixedSize: const Size(double.infinity, 45),
         primary: AppColors.amber,
         shadowColor: AppColors.amber,
-        onPrimary: Colors.black,
-        elevation: 0,
+        onPrimary: Colors.black12,
+        elevation: 2,
       ),
     ),
   );

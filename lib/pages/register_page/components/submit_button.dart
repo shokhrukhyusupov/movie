@@ -15,7 +15,7 @@ class SubmitButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       return Padding(
-        padding: EdgeInsets.symmetric(vertical: 3.h),
+        padding: EdgeInsets.symmetric(vertical: 3.h, horizontal: 2.w),
         child: SizedBox(
           width: double.infinity,
           child: ElevatedButton(

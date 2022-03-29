@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
@@ -30,12 +32,25 @@ class UserRepository {
       final emailAuth = await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
       final user = _firebaseAuth.currentUser;
-      await _collectionReference.doc(user!.uid).set({
-        'uid': user.uid,
-        'email': user.email,
-        'displayName': user.displayName,
-        'photoUrl': user.photoURL,
-      });
+      if (user != null) {
+        await user.sendEmailVerification();
+        Timer.periodic(const Duration(seconds: 1), (timer) async {
+          await user.reload();
+          final emailVerified = _firebaseAuth.currentUser!.emailVerified;
+          if (timer.tick > 120) {
+            user.delete();
+            timer.cancel();
+          } else if (emailVerified) {
+            await _collectionReference.doc(user.uid).set({
+              'uid': user.uid,
+              'email': user.email,
+              'displayName': user.displayName,
+              'photoUrl': user.photoURL,
+            });
+            timer.cancel();
+          }
+        });
+      }
       return emailAuth.user!;
     } on FirebaseException catch (e) {
       throw e.message.toString();
