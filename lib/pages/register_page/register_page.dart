@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:movie/pages/register_page/components/add_register_buttons.dart';
 import 'package:movie/pages/register_page/components/login_form_field.dart';
-import 'package:movie/pages/register_page/components/facebook_login_button.dart';
-import 'package:movie/pages/register_page/components/google_login_button.dart';
 import 'package:movie/pages/register_page/components/password_form_field.dart';
 import 'package:movie/pages/register_page/components/submit_button.dart';
 import 'package:movie/styles/images.dart';
@@ -52,9 +51,7 @@ class RegisterPage extends StatelessWidget {
                           MediaQuery.of(context).textScaleFactor.clamp(1, 1),
                     ),
                     SizedBox(height: 3.h),
-                    const GoogleLoginButton(),
-                    SizedBox(height: 2.h),
-                    const FacebookLoginButton(),
+                    const AddRegisterButtons(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

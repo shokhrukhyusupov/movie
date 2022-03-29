@@ -6,8 +6,8 @@ import 'package:movie/bloc/auth_bloc/auth_state.dart';
 import 'package:movie/pages/main_page.dart';
 import 'package:movie/styles/images.dart';
 
-class AddLoginSubmitButton extends StatelessWidget {
-  const AddLoginSubmitButton({Key? key}) : super(key: key);
+class AddLoginButtons extends StatelessWidget {
+  const AddLoginButtons({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
