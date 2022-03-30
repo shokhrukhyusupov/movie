@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:html';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -60,6 +62,32 @@ class UserRepository {
   Future<void> signOutfromEmail() async {
     await _firebaseAuth.signOut();
     _storage.delete(key: 'token');
+  }
+
+  /*-------------------Authentication with Email-------------------*/
+  Future<void> sendOtp(
+      String phoneNumber,
+      Duration timeOut,
+      PhoneVerificationFailed phoneVerificationFailed,
+      PhoneVerificationCompleted phoneVerificationCompleted,
+      PhoneCodeSent phoneCodeSent,
+      PhoneCodeAutoRetrievalTimeout autoRetrievalTimeout) async {
+    _firebaseAuth.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        verificationCompleted: (credential) async {
+          await _firebaseAuth.signInWithCredential(credential);
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          print('The provided phone number is not valid.');
+        },
+        codeSent: (verificationId, resendToken) async {
+          String smsCode = 'xxxx';
+          PhoneAuthCredential credential = PhoneAuthProvider.credential(
+              verificationId: verificationId, smsCode: smsCode);
+
+          await _firebaseAuth.signInWithCredential(credential);
+        },
+        codeAutoRetrievalTimeout: autoRetrievalTimeout);
   }
 
   /*-------------------Authentication with Google-------------------*/
